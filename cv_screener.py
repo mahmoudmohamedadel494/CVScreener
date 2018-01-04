@@ -180,13 +180,13 @@ def get_model():
     #emb_text = Embedding(MAX_TEXT, emb_size)(text)
     emb_text = Embedding(MAX_TEXT, emb_size)(text)
 
-    rnn_layer1 = GRU(16) (emb_text)
+    rnn_layer1 = GRU(160) (emb_text)
 
     #main layer
     #main_l = concatenate([rnn_layer1])
     main_l = rnn_layer1
     main_l = Dropout(0.25)(Dense(512,activation='elu') (main_l))
-    main_l = Dropout(0.2)(Dense(64,activation='elu') (main_l))
+    main_l = Dropout(0.2)(Dense(512,activation='elu') (main_l))
     main_l = Dropout(0.2)(Dense(64, activation='elu')(main_l))
     #main_l = Dropout(0.2)(Dense(nb_classes, activation='elu')(main_l))
     #output
@@ -209,7 +209,7 @@ print('[{}] Finished DEFINING MODEL...'.format(time.time() - start_time))
 gc.collect()
 
 #FITTING THE MODEL
-epochs = 2
+epochs = 10
 BATCH_SIZE = 512 * 3
 steps = int(len(X_train['text'])/BATCH_SIZE) * epochs
 lr_init, lr_fin = 0.009, 0.006
