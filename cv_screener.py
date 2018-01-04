@@ -180,13 +180,13 @@ def get_model():
     #emb_text = Embedding(MAX_TEXT, emb_size)(text)
     emb_text = Embedding(MAX_TEXT, emb_size)(text)
 
-    rnn_layer1 = GRU(160) (emb_text)
+    rnn_layer1 = GRU(300) (emb_text)
 
     #main layer
     #main_l = concatenate([rnn_layer1])
     main_l = rnn_layer1
     main_l = Dropout(0.25)(Dense(512,activation='elu') (main_l))
-    main_l = Dropout(0.2)(Dense(512,activation='elu') (main_l))
+    main_l = Dropout(0.2)(Dense(64,activation='elu') (main_l))
     main_l = Dropout(0.2)(Dense(64, activation='elu')(main_l))
     #main_l = Dropout(0.2)(Dense(nb_classes, activation='elu')(main_l))
     #output
