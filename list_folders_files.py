@@ -1,46 +1,12 @@
 
-import os
 import docx2txt
-path = "C:\\Users\\aelsalla\\Documents\\Valeo Documents\\Official & Mgmt\\Screening CVS\\DAS\\Screening"
-
-'''
-try:
-    from xml.etree.cElementTree import XML
-except ImportError:
-    from xml.etree.ElementTree import XML
-import zipfile
-
-
-"""
-Module that extract text from MS XML Word document (.docx).
-(Inspired by python-docx <https://github.com/mikemaccana/python-docx>)
-"""
-
-
-
-
-def read_doc(path):
-    """
-    Take the path of a docx file as argument, return the text in unicode.
-    """
-    document = zipfile.ZipFile(path)
-    xml_content = document.read('word/document.xml')
-    document.close()
-    tree = XML(xml_content)
-
-    paragraphs = []
-    for paragraph in tree.getiterator(PARA):
-        texts = [node.text
-                 for node in paragraph.getiterator(TEXT)
-                 if node.text]
-        if texts:
-            paragraphs.append(''.join(texts))
-
-    return '\n\n'.join(paragraphs)
-'''
-import sys
 import os
 import comtypes.client
+import PyPDF2
+import pandas as pd
+
+
+
 
 def convert_doc2docx(full_file_name):
     in_file = full_file_name
@@ -52,7 +18,6 @@ def convert_doc2docx(full_file_name):
     word.Quit()
     return out_file
 
-import docx2txt
 def read_docx(full_file_name):
 
     fullText = docx2txt.process(full_file_name)
@@ -60,7 +25,7 @@ def read_docx(full_file_name):
 
     return fullText
 
-import PyPDF2
+
 def read_pdf(full_file_name):
 
     pdfFileObj = open(full_file_name, 'rb')
@@ -70,30 +35,38 @@ def read_pdf(full_file_name):
         fullText = fullText + pdfReader.getPage(page).extractText()
     return fullText
 
-for root, dirs, files in os.walk(path):
-    if(dirs == []):
-        #print(root)
-        label = root.split("\\")[-1]
-        print(label)
-        for file in files:
+def load_data(path):
+    d = []
+    for root, dirs, files in os.walk(path):
+        if(dirs == []):
+            #print(root)
+            label = root.split("\\")[-1]
+            print(label)
+            for file in files:
 
-           #f = open(root + "\\" + file, 'rb')
-            print(file)
-            full_file_name = root + "\\" + file
+               #f = open(root + "\\" + file, 'rb')
+                print(file)
+                full_file_name = root + "\\" + file
 
-            if(os.path.splitext(file)[1] == ".docx"):
-                text = read_docx(full_file_name)
-            elif(os.path.splitext(file)[1] == ".doc"):
-                full_file_name_doc = convert_doc2docx(full_file_name)
-                text = read_docx(full_file_name_doc)
+                if(os.path.splitext(file)[1] == ".docx"):
+                    text = read_docx(full_file_name)
+                elif(os.path.splitext(file)[1] == ".doc"):
+                    full_file_name_doc = convert_doc2docx(full_file_name)
+                    text = read_docx(full_file_name_doc)
+                    os.remove(full_file_name_doc)
 
-            elif(os.path.splitext(file)[1]==".pdf"):
-                text = read_pdf(full_file_name)
-            else:
-                print("Unsupported file", file)
+                elif(os.path.splitext(file)[1]==".pdf"):
+                    text = read_pdf(full_file_name)
+                else:
+                    print("Unsupported file", file)
+
+                d.append({'text': text, 'label': label , 'file': file})
 
 
+    df = pd.DataFrame().from_dict(d)
+    return df
 
-
-
+path = "C:\\Users\\aelsalla\\Documents\\Valeo Documents\\Official & Mgmt\\Screening CVS\\DAS\\Screening"
+df = load_data(path=path)
+print(df.head(3))
 
