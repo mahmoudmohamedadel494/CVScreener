@@ -102,7 +102,7 @@ print(df.shape)
 print(df.head(3))
 
 from sklearn.model_selection import train_test_split
-train, test = train_test_split(df, random_state=666, train_size=0.8)
+train, test = train_test_split(df, random_state=666, train_size=0.9)
 #lb = LabelBinarizer().fit(df['label'])
 #train_targets = lb.transform(train.label)
 #test_targets = lb.transform(test.label)
@@ -124,8 +124,8 @@ test["seq_text"] = tok_raw.texts_to_sequences(test.text.str.lower())
 print('[{}] Finished PROCESSING TEXT DATA...'.format(time.time() - start_time))
 
 #EMBEDDINGS MAX VALUE
-print(np.max(train.seq_text.max()))
-print(np.max(test.seq_text.max()))
+#print(np.max(train.seq_text.max()))
+#print(np.max(test.seq_text.max()))
 
 print('[{}] Finished EMBEDDINGS MAX VALUE...'.format(time.time() - start_time))
 
@@ -145,9 +145,10 @@ X_train = get_keras_data(train)
 #X_valid = get_keras_data(dvalid)
 X_test = get_keras_data(test)
 
-print(X_train['text'].max)
-print(X_test['text'].max)
-MAX_TEXT = max(X_train['text'].max, X_test['text'].max)
+print(X_train['text'].max())
+print(X_test['text'].max())
+#MAX_TEXT = max(X_train['text'].max, X_test['text'].max)
+MAX_TEXT = max(tok_raw.word_index.values()) + 2
 print(MAX_TEXT)
 print('[{}] Finished DATA PREPARARTION...'.format(time.time() - start_time))
 
